@@ -17,5 +17,5 @@ A testbench is provided and can be run with:
     cd sim/run
     make sim
 
-This simulation requires icarus verilog.
-Result output is a waveform in VCD format.
+The Makefile supports Icarus verilog and Cadence xcelium.
+The VCD waveforms can be dumped by specifyin +dump_enable=1 on the command line.
