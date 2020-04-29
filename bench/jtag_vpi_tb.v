@@ -30,6 +30,7 @@
  */
 
 module jtag_vpi_tb;
+parameter DEBUG = 1;
 
 wire		tdo_pad_o;
 wire		tck_pad_i;
@@ -60,8 +61,10 @@ reg		sys_clock = 0;
 reg		sys_reset = 0;
 
 initial begin
-	$dumpfile("jtag_vpi.vcd");
-	$dumpvars(0);
+    if ($test$plusargs("dump_enable")) begin
+	  $dumpfile("jtag_vpi.vcd");
+	  $dumpvars(0);
+	end
 end
 
 always
@@ -72,7 +75,7 @@ initial begin
 	#200 sys_reset <= 0;
 end
 
-jtag_vpi #(.DEBUG_INFO(0))
+jtag_vpi #(.DEBUG_INFO(DEBUG))
 jtag_vpi0
 (
 	.tms(tms_pad_i),
@@ -135,9 +138,11 @@ adv_dbg_if dbg_if0
 	.pause_dr_i			(jtag_tap_pause_dr),
 	.update_dr_i			(jtag_tap_update_dr),
 	.debug_select_i			(dbg_if_select),
+	.int_o              (),
 
 	// Wishbone debug master
 	.wb_clk_i			(sys_clock),
+    .wb_rst_i           (1'b0),
 	.wb_dat_i			(wb_sdt),
 	.wb_ack_i			(wb_ack),
 	.wb_err_i			(wb_err),
@@ -148,7 +153,21 @@ adv_dbg_if dbg_if0
 	.wb_sel_o			(wb_sel),
 	.wb_we_o			(wb_we),
 	.wb_cti_o			(wb_cti),
-	.wb_bte_o			(wb_bte)
+	.wb_bte_o			(wb_bte),
+	.wb_cab_o           (),
+
+    .wb_jsp_adr_i       (32'h0),
+    .wb_jsp_dat_o       (),
+    .wb_jsp_dat_i       (32'h0),
+    .wb_jsp_cyc_i       (1'b0),
+    .wb_jsp_stb_i       (1'b0),
+    .wb_jsp_sel_i       (4'h0),
+    .wb_jsp_we_i        (1'b0),
+    .wb_jsp_ack_o       (),
+    .wb_jsp_cab_i       (1'b0),
+    .wb_jsp_err_o       (),
+    .wb_jsp_cti_i       (3'b000),
+    .wb_jsp_bte_i       (2'b00)
 );
 
 ram_wb_b3 ram
