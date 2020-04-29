@@ -62,8 +62,6 @@ integer		flip_tms;
 reg [31:0]	data_out;
 reg [31:0]	data_in;
 
-integer		debug;
-
 assign		tms_o = tms;
 assign		tck_o = tck;
 assign		tdi_o = tdi;
@@ -211,7 +209,7 @@ integer		nb_bits_in_this_byte;
 
 begin
 	if (DEBUG_INFO)
-		$display("(%0t) Task do_tms_seq of %d bits (length = %d)", $time, nb_bits, length);
+		$display("(%0t) Task do_tms_seq of %4d bits (length = %4d)", $time, nb_bits, length);
 
 	// Number of bits to send in the last byte
 	nb_bits_rem = nb_bits % 8;
@@ -249,7 +247,7 @@ integer		index;
 
 begin
 	if(DEBUG_INFO)
-		$display("(%0t) Task do_scan_chain of %d bits (length = %d)", $time, nb_bits, length);
+		$write("(%0t) Task do_scan_chain of %4d bits (length = %4d): ", $time, nb_bits, length);
 
 	// Number of bits to send in the last byte
 	nb_bits_rem = nb_bits % 8;
@@ -279,10 +277,13 @@ begin
 			#TCK_HALF_PERIOD tck <= 0;
 		end
 		buffer_in[index] = data_in;
+        if(DEBUG_INFO)
+		    $write("%02x ", data_in[7:0]);
 	end
-
 	tdi <= 1'b0;
 	tms <= 1'b0;
+    if(DEBUG_INFO)
+       $write("\n");
 end
 
 endtask
