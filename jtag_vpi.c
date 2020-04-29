@@ -30,10 +30,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <stdio.h>
 #include <arpa/inet.h>
 
-#include <vpi_user.h>
-
+#include "vpi_user.h"
 #include "jtag_common.h"
 
 static int is_host_little_endian(void)
@@ -180,11 +180,8 @@ void vpi_send_result_to_server(char *userdata)
 
 	// check we got passed a memory (array of regs)
 	if (!((vpi_get(vpiType, argh) == vpiMemory)
-#ifdef MODELSIM_VPI
+#if defined CDS_VPI || defined MODELSIM_VPI || defined VCS_VPI
 	|| (vpi_get(vpiType, argh) == vpiRegArray)
-#endif
-#ifdef VCS_VPI
-        || (vpi_get(vpiType, argh) == vpiRegArray)
 #endif
 	)) {
 		vpi_printf("jtag_vpi: ERROR: did not pass a memory to get_command_block_data\n");
